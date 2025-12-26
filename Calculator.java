@@ -1,5 +1,4 @@
 package calculator;
-import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.BorderFactory;
@@ -42,14 +41,14 @@ public class Calculator implements ActionListener {
 			addButton = new JButton("+");
 			subtractButton = new JButton("-");
 			multiplyButton = new JButton("*");
-			divideButton = new JButton("/");
+			divideButton = new JButton("÷");
 			decButton = new JButton(".");
 			equalButton = new JButton("=");
 			delButton = new JButton("Del");
 			clrButton = new JButton("-C-");
 			negButton = new JButton("+/-");
 			percButton = new JButton("%");
-			sqrtButton = new JButton("r");
+			sqrtButton = new JButton("√");
 			//Array of the function buttons
 			functionButtons[0] = addButton;
 			functionButtons[1] = subtractButton;
@@ -74,7 +73,7 @@ public class Calculator implements ActionListener {
 			clrButton.setBackground(new Color(255, 102, 102));
 			percButton.setBackground(new Color(0,153, 0));
 			sqrtButton.setBackground(Color.lightGray);
-			for(int i = 0; i < 10; i++ ) {
+			for(int i = 0; i < functionButtons.length; i++ ) {
 				
 				functionButtons[i].addActionListener(this);
 				functionButtons[i].setFont(myFont2);
@@ -137,99 +136,68 @@ public class Calculator implements ActionListener {
 		}
 	
 	  public static void main(String[] args) {
+		// Opens GUI Calculator
+		//new Calculator();
+		SwingUtilities.invokeLater(Calculator::new);
 
-		
-		Calculator calc =  new Calculator();
-	    char operator;
-	    double number1, number2, result;
-
-	    // create an object of Scanner class
-	    Scanner input = new Scanner(System.in);
-
-	    // ask users to enter operator
+	    // Displays users input to operator
 	    System.out.println("User Input: \n");
-	    System.out.println(calc);
-	    operator = input.next().charAt(0);
 
-	    // ask users to enter numbers
-	    System.out.println("Enter first number");
-	    number1 = input.nextDouble();
-
-	    System.out.println("Enter second number");
-	    number2 = input.nextDouble();
-
-	    switch (operator) {
-
-	      // performs addition between numbers
-	      case '+':
-	        result = number1 + number2;
-	        System.out.println(number1 + " + " + number2 + " = " + result);
-	        break;
-
-	      // performs subtraction between numbers
-	      case '-':
-	        result = number1 - number2;
-	        System.out.println(number1 + " - " + number2 + " = " + result);
-	        break;
-
-	      // performs multiplication between numbers
-	      case '*':
-	        result = number1 * number2;
-	        System.out.println(number1 + " * " + number2 + " = " + result);
-	        break;
-
-	      // performs division between numbers
-	      case '/':
-	        result = number1 / number2;
-	        System.out.println(number1 + " / " + number2 + " = " + result);
-	        break;
-	      
-	     
-	    	  
-	      default:
-	        System.out.println("Invalid operator!");
-	        break;
-	    }
-
-	    input.close();
 	  }
- 
+	// The button functions
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//Making the calculator buttons functionable
 		for(int i = 0; i < 10; i++) {
 			if(e.getSource() == numberButtons[i]) {
 				textfield.setText(textfield.getText().concat(String.valueOf(i)));
+				
+
 			}
-			
+						
 		}
 		if(e.getSource() == decButton) {
+			// Prevents multiple decimal inputs
+			if(!textfield.getText().contains(".")) {
+				
 			textfield.setText(textfield.getText().concat("."));
+			}
 		}
 		if(e.getSource() == addButton) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
+			
 			operator = '+';
 			textfield.setText("");
 		}
 		if(e.getSource() == subtractButton) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
 			operator = '-';
 			textfield.setText("");
 		}
 		if(e.getSource() == multiplyButton) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
 			operator = '*';
 			textfield.setText("");
 		}
 		if(e.getSource() == divideButton) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
 			operator = '/';
 			textfield.setText("");
 		}
 		
 		if(e.getSource() == equalButton) {
-			numb2 = Double.parseDouble(textfield.getText());
 			
+			numb2 = Double.parseDouble(textfield.getText());
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			switch (operator) {
 
 		      // performs addition between numbers
@@ -248,11 +216,17 @@ public class Calculator implements ActionListener {
 		      case '*':
 		        result = numb1 * numb2;
 		        System.out.println(numb1 + " * " + numb2 + " = " + result);
+		        
 		        break;
 
 		      // performs division between numbers
 		      case '/':
 		        result = numb1 / numb2;
+		        // Division by zero crash
+		        if(numb2 == 0) {
+		        	textfield.setText("DIVIDE BY 0 Error");
+		        	return;
+		        }
 		        System.out.println(numb1 + " / " + numb2 + " = " + result);
 		        break;
 		    
@@ -266,6 +240,8 @@ public class Calculator implements ActionListener {
 		}
 		// percentage of a number
 		if(e.getSource() == percButton ) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
 			operator = '%'; 
 			result = numb1 / 100;
@@ -281,20 +257,27 @@ public class Calculator implements ActionListener {
 			//operator = "";
 		}
 		if(e.getSource()==delButton) {
-			String string = textfield.getText();
-			textfield.setText("");
+			String text = textfield.getText();
+			if(!text.isEmpty()) {
+				
+				textfield.setText(text.substring(0, text.length() -1));
+			}
+			/**textfield.setText("");
 			for(int i = 0; i < string.length() - 1; i++) {
 				textfield.setText(textfield.getText() + string.charAt(i));
-			}
+			}*/
 		}
 		if(e.getSource()==negButton) {
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			double temp = Double.parseDouble(textfield.getText());
 			
 			temp*=-1;
 			textfield.setText(String.valueOf(temp));
 		}
 		if(e.getSource()==sqrtButton) {
-			
+			// Prevents empty field crash
+			if(textfield.getText().isEmpty()) return;
 			numb1 = Double.parseDouble(textfield.getText());
 			result = Math.sqrt(numb1);
 			textfield.setText(String.valueOf(result)); 
